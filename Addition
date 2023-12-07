@@ -1,0 +1,71 @@
+.MODEL SMALL
+
+.DATA
+
+; Split two 32-bit integers into four 16-bit variables
+
+n1_low DW 5678h
+
+n1_high DW 1234h
+
+n2_low DW 2222h
+
+n2_high DW 1111h
+
+n3_low DW ?
+
+n3_high DW ?
+
+carry DW 0
+
+.CODE
+
+.STARTUP
+
+MOV AX, n1_low
+
+ADD AX, n2_low
+
+MOV n3_low, AX
+
+ADC carry, 0
+
+; Perform the 16-bit addition for the high parts with carry
+
+MOV AX, n1_high
+
+ADC AX, n2_high
+
+ADD AX, carry
+
+MOV n3_high, AX
+
+CALL disp
+
+MOV AH, 4Ch
+
+INT 21h
+
+disp PROC NEAR
+
+MOV CX, 8
+
+up:
+
+MOV AX, n3_high
+
+ROL AX, 4
+
+MOV n3_high, AX
+
+MOV AX, n3_low
+
+ROL AX, 4
+
+MOV n3_low, AX
+
+AND AL, 0Fh
+
+CMP AL, 0Ah
+
+JAE dl
